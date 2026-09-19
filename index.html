@@ -1,0 +1,1366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Portfolio Hero — Live Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@500&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<style>
+  :root {
+    --page-bg: #f2efe8;
+    --paper: #fafaf7;
+    --rule: #e3ded0;
+    --margin: #ff8b7b;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    position: relative;
+    background: var(--paper);
+    background-image: linear-gradient(var(--rule) 1px, transparent 1px);
+    background-size: 100% 34px;
+    background-position: 0 18px;
+    min-height: 100vh;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; bottom: 0; left: 64px;
+    width: 1.5px;
+    background: var(--margin);
+    opacity: 0.55;
+    pointer-events: none;
+    z-index: 0;
+  }
+  #root { width: 100%; }
+  .wrap { width: 100%; }
+  .replay-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10;
+    background: #1a1a1a;
+    color: #fafaf7;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-family: Inter, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  }
+  .replay-btn:hover { background: #4f7d52; }
+
+  /* ---------------------------------------------------------------
+     PortfolioHero styles
+  --------------------------------------------------------------- */
+  .ph-root {
+    --ink: #1a1a1a;
+    --sage: #7fb77e;
+    --sage-deep: #4f7d52;
+    --mustard: #f4c542;
+    --mustard-deep: #8a6a12;
+    --coral: #ff6b6b;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: transparent;
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    color: var(--ink);
+    isolation: isolate;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ph-root * { animation: none !important; transition-duration: 0.01ms !important; }
+  }
+  .ph-paper {
+    position: absolute; inset: 0; z-index: 0;
+  }
+  .ph-paper::after {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 40%, rgba(255,255,255,0) 55%, rgba(0,0,0,0.035) 100%);
+  }
+  .ph-stage {
+    position: relative; z-index: 1; max-width: 960px; margin: 0 auto;
+    padding: 96px 24px 72px; display: flex; flex-direction: column;
+    align-items: center; text-align: center;
+  }
+  .ph-center { position: relative; z-index: 3; }
+  .ph-eyebrow {
+    margin: 0 0 4px; font-family: "Caveat", cursive; font-size: 20px;
+    color: #6b6b6b; opacity: 0; transform: translateY(6px);
+    transition: opacity 420ms ease, transform 420ms ease;
+  }
+  .ph-name { position: relative; display: inline-flex; margin: 4px 0 8px; }
+  .ph-name__pop {
+    display: inline-block; font-family: "Archivo Black", sans-serif;
+    font-size: clamp(56px, 12vw, 108px); letter-spacing: 0.01em;
+    color: var(--ink); padding: 4px 18px; border: 2.5px solid var(--coral);
+    border-radius: 4px; background: var(--paper); vertical-align: top;
+    box-shadow: 4px 4px 0 rgba(255,107,107,0.18);
+    opacity: 0; transform: scale(0.4) rotate(-6deg);
+    transition: opacity 260ms ease-out, transform 620ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .ph-underline {
+    width: 180px; height: 20px; margin: 0 auto; opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 400ms ease 520ms, transform 400ms ease 520ms;
+  }
+  .ph-underline svg { width: 100%; height: 100%; }
+  .ph-underline path { fill: none; stroke: var(--mustard-deep); stroke-width: 3; stroke-linecap: round; }
+  .ph-akaflier {
+    position: absolute;
+    top: 100%;
+    left: 100%;
+    margin-top: 26px;
+    margin-left: -26px;
+    width: 140px;
+    height: 92px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 480ms ease 780ms, transform 480ms ease 780ms;
+  }
+  .ph-ready .ph-akaflier { opacity: 1; transform: translateY(0); }
+  .ph-akaflier__svg { position: absolute; top: 0; left: 0; overflow: visible; }
+  .ph-akaflier__curve {
+    fill: none;
+    stroke: var(--coral);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-dasharray: 1 8;
+  }
+  .ph-akaflier__label {
+    position: absolute;
+    top: 0;
+    left: 6px;
+    font-family: "Caveat", cursive;
+    font-size: 29px;
+    font-weight: 600;
+    color: var(--coral);
+    transform: rotate(-7deg);
+    white-space: nowrap;
+  }
+  .ph-akaflier__plane {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 18px;
+    height: 18px;
+    offset-path: path("M8,12 C 46,-6 86,26 66,50 C 54,68 88,76 118,60");
+    offset-rotate: auto;
+    animation: ph-fly-loop 3.2s ease-in-out infinite;
+  }
+  .ph-akaflier__plane svg { display: block; }
+  @keyframes ph-fly-loop {
+    0%   { offset-distance: 0%;   opacity: 0; }
+    10%  { opacity: 1; }
+    88%  { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ph-akaflier__plane { animation: none; offset-distance: 40%; opacity: 1; }
+  }
+  .ph-tagline {
+    margin: 28px 0 24px; font-family: "Archivo Black", sans-serif; font-weight: 400;
+    font-size: clamp(22px, 4vw, 32px); line-height: 1.35; max-width: 560px;
+    opacity: 0; transform: translateY(10px);
+    transition: opacity 460ms ease 560ms, transform 460ms ease 560ms;
+  }
+  .ph-tagline__spin { display: inline-block; color: var(--sage-deep); animation: ph-spin 6s linear infinite; }
+  .ph-tagline__bloom { display: inline-block; color: var(--coral); animation: ph-pulse 2.4s ease-in-out infinite; }
+  .ph-ready .ph-eyebrow   { opacity: 1; transform: translateY(0); }
+  .ph-ready .ph-name__pop { opacity: 1; transform: scale(1) rotate(-2deg); }
+  .ph-ready .ph-underline { opacity: 1; transform: translateY(0); }
+  .ph-ready .ph-tagline   { opacity: 1; transform: translateY(0); }
+  .ph-sticker, .ph-photo {
+    position: absolute; z-index: 2; opacity: 0; transform: translateY(14px) scale(0.85);
+    transition: opacity 480ms ease, transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .ph-ready .ph-sticker, .ph-ready .ph-photo { opacity: 1; transform: translateY(0) scale(1); }
+  .ph-ready .float-a { animation: ph-float-a 7s ease-in-out 0.6s infinite; }
+  .ph-ready .float-b { animation: ph-float-b 8s ease-in-out 0.6s infinite; }
+  .ph-ready .float-c { animation: ph-float-c 6.5s ease-in-out 0.6s infinite; }
+  .ph-tag {
+    display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px;
+    border-radius: 999px; font-size: 13px; font-weight: 600; white-space: nowrap;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.08);
+  }
+  .ph-tag__dot { width: 6px; height: 6px; border-radius: 50%; background: #3aa76d; display: inline-block; }
+  .tag--sage         { background: var(--sage); color: #1e3d20; }
+  .tag--sage-outline { background: var(--paper); color: var(--sage-deep); border: 1.5px solid var(--sage); }
+  .tag--mustard      { background: var(--mustard); color: #4a3900; }
+  .tag--pill         { background: var(--paper); color: var(--ink); border: 1.5px solid #ddd6c4; }
+  .ph-doodle {
+    position: absolute; z-index: 2; opacity: 0; transform: translateY(14px) scale(0.85);
+    transition: opacity 480ms ease, transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.15));
+    pointer-events: none;
+  }
+  .ph-doodle img { display: block; width: 100%; height: auto; }
+  .ph-ready .ph-doodle { opacity: 1; transform: translateY(0) scale(1); }
+  .ph-photo__frame {
+    width: 64px; height: 64px; border-radius: 10px; background: #fff;
+    border: 1px solid #e6e1d2; box-shadow: 3px 4px 0 rgba(0,0,0,0.08);
+    display: flex; align-items: center; justify-content: center; font-size: 28px;
+    transform: rotate(-4deg);
+  }
+  @keyframes ph-float-a { 0%,100% { transform: translate(0,0) rotate(-2deg); } 50% { transform: translate(6px,-10px) rotate(1deg); } }
+  @keyframes ph-float-b { 0%,100% { transform: translate(0,0) rotate(2deg); } 50% { transform: translate(-8px,8px) rotate(-1deg); } }
+  @keyframes ph-float-c { 0%,100% { transform: translate(0,0) rotate(0deg); } 50% { transform: translate(5px,10px) rotate(3deg); } }
+  @keyframes ph-spin  { to { transform: rotate(360deg); } }
+  @keyframes ph-pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+  @media (max-width: 640px) {
+    .ph-sticker, .ph-photo { position: static; display: inline-flex; margin: 4px 6px; transform: none !important; animation: none !important; }
+    .ph-stage { padding-top: 56px; }
+    .ph-photo { display: none; }
+    .ph-doodle { display: none; }
+    .ph-akaflier { display: none; }
+  }
+
+  /* ---------------------------------------------------------------
+     FolderStack styles
+  --------------------------------------------------------------- */
+  .fs-root {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 24px 24px 180px;
+    text-align: center;
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+  }
+  .fs-eyebrow {
+    margin: 0 0 6px;
+    font-family: "Caveat", cursive;
+    font-size: 24px;
+    color: #7a7a7a;
+  }
+  .fs-heading {
+    margin: 0 0 64px;
+    font-family: "Archivo Black", sans-serif;
+    font-weight: 400;
+    font-size: clamp(30px, 6vw, 44px);
+    color: #1a1a1a;
+  }
+  .fs-deco, .wx-deco {
+    position: absolute;
+    width: var(--deco-w, 100px);
+    filter: drop-shadow(0 10px 16px rgba(0,0,0,0.18));
+    cursor: pointer;
+    z-index: 0;
+    transform-origin: center;
+    animation: fs-deco-float var(--deco-dur, 7s) ease-in-out var(--deco-delay, 0s) infinite;
+    transition: transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1), filter 260ms ease;
+  }
+  .fs-deco img, .wx-deco img { display: block; width: 100%; height: auto; }
+  .fs-deco:hover, .wx-deco:hover {
+    animation-play-state: paused;
+    filter: drop-shadow(0 16px 22px rgba(0,0,0,0.26));
+    transform: scale(1.18) rotate(calc(var(--deco-rot, 0deg) * -1)) !important;
+  }
+  .fs-deco:active, .wx-deco:active {
+    transform: scale(0.92) rotate(var(--deco-rot, 0deg)) !important;
+  }
+  @keyframes fs-deco-float {
+    0%, 100% { transform: translateY(0) rotate(var(--deco-rot, 0deg)); }
+    50% { transform: translateY(-14px) rotate(calc(var(--deco-rot, 0deg) + 4deg)); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fs-deco, .wx-deco { animation: none; }
+  }
+  @media (max-width: 900px) {
+    .fs-deco, .wx-deco { display: none; }
+  }
+  .fs-column {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .fs-folder {
+    --folder-color: #ff6b6b;
+    --rot: 0deg;
+    --photo-rot: 5deg;
+    --offset-x: 0px;
+    position: relative;
+    margin-top: -18px;
+    border: none;
+    padding: 0;
+    background: none;
+    font: inherit;
+    text-align: left;
+    display: block;
+    width: 100%;
+    transform: translateX(var(--offset-x)) rotate(var(--rot));
+    transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+    cursor: pointer;
+  }
+  .fs-folder:first-child { margin-top: 0; }
+  .fs-folder:hover, .fs-folder:focus-visible {
+    transform: translateY(-22px) scale(1.035) translateX(0) rotate(0deg);
+    z-index: 50;
+    outline: none;
+  }
+  .fs-folder:hover .fs-folder__body,
+  .fs-folder:focus-visible .fs-folder__body {
+    box-shadow: 0 30px 0 rgba(0,0,0,0.05), 0 34px 46px rgba(0,0,0,0.26);
+  }
+  .fs-folder__closed {
+    position: relative;
+    z-index: 1;
+    perspective: 500px;
+    transition: opacity 160ms ease;
+  }
+  .fs-folder:hover .fs-folder__closed,
+  .fs-folder:focus-visible .fs-folder__closed {
+    opacity: 0;
+    transition: opacity 140ms ease;
+  }
+  .fs-folder__tab {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 58px;
+    padding: 0 26px;
+    border-radius: 16px 16px 0 0;
+    background: var(--folder-color);
+    box-shadow: 0 -2px 0 rgba(255,255,255,0.3) inset;
+    transform-origin: bottom center;
+    transition: transform 340ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .fs-folder:hover .fs-folder__tab,
+  .fs-folder:focus-visible .fs-folder__tab {
+    transform: rotateX(-40deg) translateY(-4px);
+  }
+  .fs-folder__icon { font-size: 22px; line-height: 1; }
+  .fs-folder__label {
+    font-family: "Archivo Black", sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    letter-spacing: 0.02em;
+    color: #1a1a1a;
+    white-space: nowrap;
+  }
+  .fs-folder__body {
+    position: relative;
+    z-index: 1;
+    min-height: 200px;
+    border-radius: 0 20px 20px 20px;
+    background: var(--folder-color);
+    box-shadow: 0 16px 0 rgba(0,0,0,0.05), 0 8px 22px rgba(0,0,0,0.16);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding: 26px 132px 26px 28px;
+    transition: box-shadow 360ms ease;
+  }
+  .fs-folder__caption {
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    font-family: "Caveat", cursive;
+    font-size: 24px;
+    line-height: 1.3;
+    color: #1a1a1a;
+  }
+  .fs-folder__photo {
+    position: absolute;
+    right: 24px;
+    bottom: -16px;
+    width: 112px;
+    padding: 7px 7px 20px;
+    background: #fff;
+    border-radius: 3px;
+    box-shadow: 0 14px 24px rgba(0,0,0,0.3);
+    transform: rotate(var(--photo-rot));
+  }
+  .fs-folder__photo img {
+    display: block;
+    width: 100%;
+    height: 92px;
+    object-fit: cover;
+    border-radius: 1px;
+    background: #d8d3c4;
+  }
+  .fs-folder__tape {
+    position: absolute;
+    z-index: 3;
+    width: 64px;
+    height: 22px;
+    top: -11px;
+    right: 40px;
+    background: repeating-linear-gradient(45deg, rgba(255,255,255,0.6) 0 6px, rgba(255,255,255,0.32) 6px 12px);
+    box-shadow: 0 2px 3px rgba(0,0,0,0.12);
+    transform: rotate(-8deg);
+  }
+  .fs-stamp {
+    position: absolute;
+    right: 20px;
+    top: 18px;
+    z-index: 2;
+    transform: rotate(9deg);
+    opacity: 0.85;
+  }
+  .fs-folder__page {
+    position: absolute;
+    inset: -14px -10px -20px -10px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 22px 26px;
+    background-color: #fffdf6;
+    background-image:
+      linear-gradient(rgba(120, 170, 225, 0.32) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(120, 170, 225, 0.32) 1px, transparent 1px);
+    background-size: 22px 22px;
+    background-position: -1px -1px;
+    border-radius: 22px;
+    box-shadow: 0 30px 56px rgba(0,0,0,0.34), 0 2px 0 rgba(0,0,0,0.06);
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+    transform-origin: 50% 15%;
+    pointer-events: none;
+    transition: opacity 260ms ease, transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .fs-folder:hover .fs-folder__page,
+  .fs-folder:focus-visible .fs-folder__page {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  .fs-folder__page-img {
+    width: 92px;
+    height: 116px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 10px 18px rgba(0,0,0,0.22);
+    flex-shrink: 0;
+  }
+  .fs-folder__page-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "Archivo Black", sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    color: #1a1a1a;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin: 0 0 8px;
+  }
+  .fs-folder__page-caption {
+    margin: 0 0 10px;
+    font-family: "Caveat", cursive;
+    font-size: 23px;
+    line-height: 1.3;
+    color: #1a1a1a;
+  }
+  .fs-folder__page-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a1a1a;
+    text-decoration: none;
+    border-bottom: 2px solid currentColor;
+    padding-bottom: 1px;
+    pointer-events: auto;
+  }
+  .fs-folder__page-link:hover { opacity: 0.65; }
+  @media (prefers-reduced-motion: reduce) {
+    .fs-folder__tab, .fs-folder__page, .fs-folder__closed { transition: none !important; }
+  }
+  @media (max-width: 560px) {
+    .fs-folder__body { padding-right: 108px; }
+    .fs-folder__photo { width: 90px; right: 16px; }
+    .fs-folder__photo img { height: 74px; }
+    .fs-folder__caption { font-size: 20px; }
+    .fs-stamp { display: none; }
+    .fs-folder__page { padding: 16px 18px; gap: 12px; }
+    .fs-folder__page-img { width: 72px; height: 92px; }
+    .fs-folder__page-caption { font-size: 19px; }
+  }
+
+  /* ---------------------------------------------------------------
+     PortfolioTeaser styles
+  --------------------------------------------------------------- */
+  .pt-root {
+    padding: 40px 24px 120px;
+    display: flex;
+    justify-content: center;
+    perspective: 1400px;
+  }
+  .pt-block {
+    width: 100%;
+    max-width: 720px;
+    background: #1a1a1a;
+    color: #fafaf7;
+    border-radius: 24px;
+    padding: 64px 40px;
+    text-align: center;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+    opacity: 0;
+    transform: translateY(140px) rotateX(-62deg);
+    transform-origin: bottom center;
+    transition: opacity 800ms ease, transform 1000ms cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+  }
+  .pt-block.pt-visible {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
+  }
+  .pt-eyebrow {
+    font-family: "Caveat", cursive;
+    font-size: 26px;
+    color: #ff8b7b;
+    margin: 0 0 8px;
+  }
+  .pt-line {
+    font-family: "Archivo Black", sans-serif;
+    font-weight: 400;
+    font-size: clamp(26px, 5vw, 42px);
+    line-height: 1.25;
+    margin: 0 0 16px;
+  }
+  .pt-sub {
+    font-family: "Inter", sans-serif;
+    font-size: 16px;
+    color: #cfcac0;
+    margin: 0;
+  }
+  .pt-arrow {
+    margin-top: 28px;
+    font-size: 22px;
+    color: #f4c542;
+    animation: pt-bounce 1.8s ease-in-out infinite;
+  }
+  @keyframes pt-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pt-block { transition: opacity 400ms ease !important; transform: none !important; }
+    .pt-arrow { animation: none; }
+  }
+  @media (max-width: 560px) {
+    .pt-block { padding: 48px 24px; }
+  }
+
+  /* ---------------------------------------------------------------
+     ScrollTicker styles
+  --------------------------------------------------------------- */
+  .tk-wrap {
+    position: relative;
+  }
+  .tk-root {
+    position: relative;
+    overflow: hidden;
+    background: #1a1a1a;
+    padding: 18px 0;
+  }
+  .tk-track {
+    display: inline-flex;
+    width: max-content;
+    animation: tk-scroll 22s linear infinite;
+    will-change: transform;
+  }
+  .tk-root:hover .tk-track { animation-play-state: paused; }
+  .tk-group {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .tk-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    font-family: "Archivo Black", sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    color: #ff3b3b;
+    padding: 0 18px;
+    white-space: nowrap;
+  }
+  .tk-dot { color: #f4c542; font-size: 15px; }
+  .tk-wave {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 14px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='14' viewBox='0 0 40 14'><path d='M0 7 C5 0,15 0,20 7 C25 14,35 14,40 7 L40 14 L0 14 Z' fill='%231a1a1a'/></svg>");
+    background-repeat: repeat-x;
+    background-size: 40px 14px;
+    animation: tk-flow 2.4s linear infinite;
+    pointer-events: none;
+  }
+  .tk-wave--top { top: -13px; transform: scaleY(-1); }
+  .tk-wave--bottom { bottom: -13px; }
+  @keyframes tk-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes tk-flow {
+    from { background-position-x: 0; }
+    to { background-position-x: -40px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tk-track { animation: none; }
+    .tk-wave { animation: none; }
+  }
+  @media (max-width: 560px) {
+    .tk-item { font-size: 16px; padding: 0 12px; }
+  }
+
+  /* ---------------------------------------------------------------
+     WorkExperience styles
+  --------------------------------------------------------------- */
+  .wx-root {
+    position: relative;
+    background: #e6127f;
+    padding: 64px 24px 100px;
+    overflow: hidden;
+  }
+  .wx-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .wx-eyebrow {
+    margin: 0 0 6px;
+    font-family: "Caveat", cursive;
+    font-size: 24px;
+    color: #ffd1e8;
+  }
+  .wx-heading {
+    margin: 0 0 44px;
+    font-family: "Archivo Black", sans-serif;
+    font-weight: 400;
+    font-size: clamp(28px, 5.5vw, 40px);
+    color: #fffdf6;
+  }
+  .wx-carousel { position: relative; padding-top: 30px; }
+  .wx-hint {
+    position: absolute;
+    top: 0;
+    left: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "Caveat", cursive;
+    font-size: 19px;
+    color: #ffe3f1;
+    animation: wx-hint-shimmy 1.8s ease-in-out infinite;
+    transition: opacity 400ms ease;
+  }
+  .wx-hint--done { opacity: 0; pointer-events: none; }
+  @keyframes wx-hint-shimmy {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(6px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wx-hint { animation: none; }
+  }
+  .wx-track {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 20px 4px 28px;
+    margin: 0 -4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .wx-track::-webkit-scrollbar { display: none; }
+  .wx-card {
+    position: relative;
+    flex: 0 0 88%;
+    scroll-snap-align: center;
+    transform: rotate(var(--wx-rot, -1.5deg));
+    transition: transform 320ms ease;
+  }
+  .wx-card:hover { transform: rotate(0deg) translateY(-6px); }
+  .wx-star {
+    position: absolute;
+    font-size: 34px;
+    color: #1a1a1a;
+    z-index: 3;
+    line-height: 1;
+  }
+  .wx-star--tl { top: -14px; left: -10px; transform: rotate(-12deg); }
+  .wx-star--br { bottom: 6px; right: -12px; transform: rotate(16deg); }
+  .wx-scallop {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 22px;
+    background-color: #fffdf6;
+    background-image: radial-gradient(circle at 50% 0%, #e6127f 0 11px, transparent 11.5px);
+    background-size: 32px 22px;
+    background-repeat: repeat-x;
+    background-position: 0 0;
+    border-radius: 18px 18px 0 0;
+  }
+  .wx-paper {
+    position: relative;
+    background: #fffdf6;
+    border-radius: 0 0 18px 18px;
+    padding: 26px 24px 30px;
+    margin-top: 22px;
+    text-align: left;
+    box-shadow: 0 18px 34px rgba(0,0,0,0.25);
+    min-height: 280px;
+  }
+  .wx-period {
+    margin: 0 0 4px;
+    font-family: "Inter", sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: #e6127f;
+    text-transform: uppercase;
+  }
+  .wx-role {
+    margin: 0 0 4px;
+    font-family: "Archivo Black", sans-serif;
+    font-weight: 400;
+    font-size: 22px;
+    color: #1a1a1a;
+  }
+  .wx-company {
+    margin: 0 0 14px;
+    font-family: "Caveat", cursive;
+    font-size: 19px;
+    color: #6b6b6b;
+  }
+  .wx-points {
+    margin: 0;
+    padding-left: 18px;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #1a1a1a;
+  }
+  .wx-points li { margin-bottom: 6px; }
+  .wx-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .wx-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.4);
+    cursor: pointer;
+    padding: 0;
+  }
+  .wx-dot--active { background: #fffdf6; }
+  .wx-monitor-wrap {
+    margin-top: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .wx-monitor-caption {
+    font-family: "Caveat", cursive;
+    font-size: 20px;
+    color: #ffe3f1;
+  }
+  .wx-monitor {
+    position: relative;
+    width: 340px;
+    max-width: 78vw;
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.35));
+  }
+  .wx-monitor__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    position: relative;
+    z-index: 1;
+  }
+  .wx-monitor__screen {
+    position: absolute;
+    top: 6.6%; left: 25.7%; right: 32.5%; bottom: 65.3%;
+    z-index: 2;
+    overflow: hidden;
+    background: #0a1710;
+    border-radius: 1px;
+  }
+  .wx-monitor__flash {
+    position: absolute;
+    inset: 0;
+    background: #eafff0;
+    opacity: 0;
+    transform: scaleY(0.02);
+    transform-origin: center;
+  }
+  .wx-monitor--on .wx-monitor__flash {
+    animation: wx-crt-flash 750ms ease-out forwards;
+  }
+  @keyframes wx-crt-flash {
+    0%   { opacity: 0; transform: scaleY(0.02); }
+    35%  { opacity: 1; transform: scaleY(1); }
+    70%  { opacity: 0.55; transform: scaleY(1); }
+    100% { opacity: 0; transform: scaleY(1); }
+  }
+  .wx-monitor__link {
+    position: absolute;
+    top: 6.6%; left: 25.7%; right: 32.5%; bottom: 65.3%;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: "Inter", monospace;
+    font-size: 10.5px;
+    line-height: 1.3;
+    font-weight: 700;
+    color: #6dffa0;
+    text-shadow: 0 0 6px rgba(109,255,160,0.85), 0 0 1px rgba(109,255,160,0.9);
+    text-decoration: none;
+    padding: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 450ms ease 600ms;
+  }
+  .wx-monitor--on .wx-monitor__link {
+    opacity: 1;
+    pointer-events: auto;
+    animation: wx-crt-flicker 2.6s ease-in-out 900ms infinite;
+  }
+  @keyframes wx-crt-flicker {
+    0%, 96%, 100% { opacity: 1; }
+    97% { opacity: 0.7; }
+    98% { opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wx-monitor--on .wx-monitor__flash { animation: none; opacity: 0; }
+    .wx-monitor--on .wx-monitor__link { animation: none; }
+  }
+  @media (min-width: 640px) {
+    .wx-card { flex-basis: 70%; }
+  }
+  @media (max-width: 560px) {
+    .wx-card { flex-basis: 92%; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useEffect, useState, useRef } = React;
+
+const DEFAULT_STICKERS = [
+  { id: "made-things", label: "made things", kind: "tag tag--sage", style: { top: "6%", left: "20%" }, float: "float-a" },
+  { id: "sweat", label: "sweat the details", kind: "tag tag--sage", style: { top: "6%", right: "14%" }, float: "float-b" },
+  { id: "role", label: "Product Designer", kind: "tag tag--mustard", style: { top: "34%", left: "16%" }, float: "float-c" },
+  { id: "status", label: "open to new work", kind: "tag tag--pill", style: { top: "36%", left: "38%" }, float: "float-a", dot: true },
+  { id: "loc", label: "Chicago, IL", kind: "tag tag--sage-outline", style: { top: "34%", right: "16%" }, float: "float-b" },
+];
+
+const DEFAULT_PHOTOS = [
+  { id: "p1", style: { top: "10%", left: "5%" }, float: "float-c", emoji: "🧑‍💻" },
+  { id: "p2", style: { top: "10%", right: "5%" }, float: "float-a", emoji: "🧢" },
+];
+
+const DEFAULT_DOODLES = [
+  { id: "doo1", src: "assets/heart.png", style: { top: "23%", left: "9%" }, float: "float-b", width: 38 },
+  { id: "doo2", src: "assets/strawberry.png", style: { top: "25%", right: "10%" }, float: "float-c", width: 44 },
+];
+
+function PortfolioHero({
+  name = "CHANDANA",
+  role = "Product Designer",
+  location = "Chicago, IL",
+  tagline = ["I design software that", "gets out of your way."],
+  stickers = DEFAULT_STICKERS,
+  photos = DEFAULT_PHOTOS,
+  doodles = DEFAULT_DOODLES,
+  playKey = 0,
+}) {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    setReady(false);
+    const raf = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setReady(true));
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [playKey]);
+
+  return (
+    <section className={`ph-root ${ready ? "ph-ready" : ""}`}>
+      <div className="ph-paper" aria-hidden="true" />
+      <div className="ph-stage">
+        {photos.map((p, i) => (
+          <div key={p.id} className={`ph-photo ${p.float}`} style={{ ...p.style, transitionDelay: `${80 + i * 90}ms` }}>
+            <div className="ph-photo__frame"><span>{p.emoji}</span></div>
+          </div>
+        ))}
+        {doodles.map((d, i) => (
+          <div
+            key={d.id}
+            className={`ph-doodle ${d.float}`}
+            style={{ ...d.style, width: `${d.width}px`, transitionDelay: `${140 + i * 90}ms` }}
+          >
+            <img src={d.src} alt="" loading="lazy" />
+          </div>
+        ))}
+        {stickers.map((s, i) => (
+          <div key={s.id} className={`ph-sticker ${s.float}`} style={{ ...s.style, transitionDelay: `${60 + i * 70}ms` }}>
+            <span className={`ph-tag ${s.kind}`}>
+              {s.dot && <i className="ph-tag__dot" />}
+              {s.label}
+            </span>
+          </div>
+        ))}
+        <div className="ph-center">
+          <p className="ph-eyebrow">my name is</p>
+          <h1 className="ph-name">
+            <span className="ph-name__pop">{name}</span>
+            <div className="ph-akaflier" aria-hidden="true">
+              <span className="ph-akaflier__label">aka lumy</span>
+              <svg className="ph-akaflier__svg" width="140" height="92" viewBox="0 0 140 92">
+                <defs>
+                  <marker id="ph-arrowhead" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M1,1 L9,5 L1,9" fill="none" stroke="#ff6b6b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </marker>
+                </defs>
+                <path className="ph-akaflier__curve" d="M8,12 C 46,-6 86,26 66,50 C 54,68 88,76 118,60" markerEnd="url(#ph-arrowhead)" />
+              </svg>
+              <div className="ph-akaflier__plane">
+                <svg viewBox="0 0 24 24" width="18" height="18">
+                  <path d="M22 12 L3 4 L10 12 L3 20 Z" fill="#1a1a1a" />
+                  <path d="M22 12 L10 12 L14 16 Z" fill="#ff6b6b" />
+                </svg>
+              </div>
+            </div>
+          </h1>
+          <div className="ph-underline" aria-hidden="true">
+            <svg viewBox="0 0 220 24" preserveAspectRatio="none">
+              <path d="M4 16 C 50 4, 170 24, 216 8" />
+            </svg>
+          </div>
+        </div>
+        <h2 className="ph-tagline">
+          {tagline[0]} <span className="ph-tagline__spin">◎</span><br />
+          {tagline[1]} <span className="ph-tagline__bloom">✻</span>
+        </h2>
+      </div>
+    </section>
+  );
+}
+
+const FOLDERS = [
+  {
+    id: "f1", label: "PHOTOGRAPHY", icon: "📸", color: "#ff6b6b", rot: -2, photoRot: 6, offsetX: 22,
+    caption: "my photography, mostly on instagram", tape: true,
+    link: { label: "@chandanalumy03", url: "https://www.instagram.com/chandanalumy03?stkn=MTcxNDdqcmxqaXIzZA==" },
+    img: "assets/photo-camera.png",
+  },
+  {
+    id: "f2", label: "YOGA", icon: "🧘", color: "#4fb0e8", rot: 1.6, photoRot: -5, offsetX: -26,
+    caption: "yoga keeps my mind fresh & calm", tape: false,
+    img: "assets/cat.png",
+  },
+  {
+    id: "f3", label: "JOURNAL", icon: "📓", color: "#f4c542", rot: -1.4, photoRot: 5, offsetX: 18,
+    caption: "i love to journal & document things — i just write stuff", tape: true,
+    img: "assets/photo-journal.png",
+  },
+  {
+    id: "f4", label: "X / TWITTER", icon: "🗯️", color: "#7fb77e", rot: 2, photoRot: -6, offsetX: -20,
+    caption: "professional shitposter. wanna yap?", tape: false,
+    link: { label: "@CattyDevz", url: "https://x.com/CattyDevz" },
+    img: "assets/photo-x.png",
+  },
+  {
+    id: "f5", label: "CONTACT", icon: "✉️", color: "#b48be0", rot: -1.2, photoRot: 4, offsetX: 16,
+    caption: "say hi — I don't bite", tape: true, stamp: true, hidden: true,
+    img: "assets/heart.png",
+  },
+];
+
+function FolderStamp() {
+  return (
+    <svg className="fs-stamp" viewBox="0 0 100 100" width="60" height="60" aria-hidden="true">
+      <defs>
+        <path id="fs-stamp-arc" d="M 12,52 A 38,38 0 1,1 88,52" fill="none" />
+      </defs>
+      <circle cx="50" cy="50" r="44" fill="none" stroke="#1a1a1a" strokeWidth="1.2" strokeDasharray="2.5 3.5" />
+      <text fontSize="8" fontFamily="Inter, sans-serif" fill="#1a1a1a" letterSpacing="1.2">
+        <textPath href="#fs-stamp-arc" startOffset="1">CHANDANA · AKA LUMY ·</textPath>
+      </text>
+      <text x="50" y="58" fontSize="18" textAnchor="middle" fontFamily="Archivo Black, sans-serif" fill="#1a1a1a">✷</text>
+    </svg>
+  );
+}
+
+const DECOR = [
+  { id: "d1", src: "assets/camera.png", side: "left", top: "1%", width: 210, rot: -8, dur: 7.5, delay: 0 },
+  { id: "d2", src: "assets/computer.png", side: "right", top: "10%", width: 175, rot: 6, dur: 8.2, delay: 0.4 },
+  { id: "d3", src: "assets/cat.png", side: "left", top: "28%", width: 150, rot: -5, dur: 6.8, delay: 0.8 },
+  { id: "d4", src: "assets/pencil.png", side: "right", top: "42%", width: 195, rot: 11, dur: 7.8, delay: 0.2 },
+  { id: "d5", src: "assets/star-outline.png", side: "left", top: "57%", width: 130, rot: 14, dur: 6.2, delay: 0.6 },
+  { id: "d6", src: "assets/spark.png", side: "right", top: "70%", width: 150, rot: -12, dur: 7.1, delay: 0.3 },
+  { id: "d7", src: "assets/sun.png", side: "left", top: "86%", width: 170, rot: 6, dur: 8.6, delay: 0.5 },
+];
+
+function FolderDecor() {
+  return DECOR.map((d) => (
+    <div
+      key={d.id}
+      className="fs-deco"
+      aria-hidden="true"
+      style={{
+        top: d.top,
+        ...(d.side === "left" ? { right: "100%", marginRight: "28px" } : { left: "100%", marginLeft: "28px" }),
+        "--deco-w": `${d.width}px`,
+        "--deco-rot": `${d.rot}deg`,
+        "--deco-dur": `${d.dur}s`,
+        "--deco-delay": `${d.delay}s`,
+      }}
+    >
+      <img src={d.src} alt="" loading="lazy" />
+    </div>
+  ));
+}
+
+function FolderStack() {
+  return (
+    <section className="fs-root">
+      <FolderDecor />
+      <p className="fs-eyebrow">dig through the drawer</p>
+      <h3 className="fs-heading">poke a folder</h3>
+      <div className="fs-column">
+        {FOLDERS.filter((f) => !f.hidden).map((f) => (
+          <div
+            key={f.id}
+            className="fs-folder"
+            style={{ "--folder-color": f.color, "--rot": `${f.rot}deg`, "--photo-rot": `${f.photoRot}deg`, "--offset-x": `${f.offsetX}px` }}
+            tabIndex={0}
+            role="button"
+            aria-label={`${f.label} folder`}
+          >
+            <div className="fs-folder__closed">
+              <div className="fs-folder__tab">
+                <span className="fs-folder__icon" aria-hidden="true">{f.icon}</span>
+                <span className="fs-folder__label">{f.label}</span>
+              </div>
+              <div className="fs-folder__body">
+                {f.tape && <span className="fs-folder__tape" aria-hidden="true" />}
+                {f.stamp && <FolderStamp />}
+                <p className="fs-folder__caption">{f.caption}</p>
+                <div className="fs-folder__photo">
+                  <img src={f.img} alt="" loading="lazy" />
+                </div>
+              </div>
+            </div>
+            <div className="fs-folder__page" aria-hidden="true">
+              <img className="fs-folder__page-img" src={f.img} alt="" loading="lazy" />
+              <div>
+                <span className="fs-folder__page-tag" style={{ background: f.color }}>
+                  {f.icon} {f.label}
+                </span>
+                <p className="fs-folder__page-caption">{f.caption}</p>
+                {f.link && (
+                  <a
+                    className="fs-folder__page-link"
+                    href={f.link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {f.link.label} ↗
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+const TICKER_ITEMS = [
+  "OPEN TO OPPORTUNITIES",
+  "AKA LUMY",
+  "LET'S BUILD SOMETHING",
+  "SAY HI ANYTIME",
+  "PORTFOLIO.EXE",
+];
+
+function ScrollTicker() {
+  const renderGroup = () =>
+    TICKER_ITEMS.map((t, i) => (
+      <span className="tk-item" key={i}>
+        {t} <span className="tk-dot" aria-hidden="true">✷</span>
+      </span>
+    ));
+  return (
+    <div className="tk-wrap">
+      <div className="tk-wave tk-wave--top" aria-hidden="true" />
+      <div className="tk-root">
+        <div className="tk-track">
+          <div className="tk-group">{renderGroup()}</div>
+          <div className="tk-group" aria-hidden="true">{renderGroup()}</div>
+        </div>
+      </div>
+      <div className="tk-wave tk-wave--bottom" aria-hidden="true" />
+    </div>
+  );
+}
+
+function PortfolioTeaser() {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.35 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <section className="pt-root">
+      <div ref={ref} className={`pt-block${visible ? " pt-visible" : ""}`}>
+        <p className="pt-eyebrow">wait—</p>
+        <h2 className="pt-line">you're here for my portfolio, right?</h2>
+        <p className="pt-sub">good. let's get into the actual work.</p>
+        <div className="pt-arrow" aria-hidden="true">↓</div>
+      </div>
+    </section>
+  );
+}
+
+const EXPERIENCES = [
+  {
+    id: "e1",
+    period: "2025 – Present",
+    role: "Software Engineer",
+    company: "RealPage — Integrated Environment (IE)",
+    points: [
+      "Screening workflows, automation & CI/CD pipelines",
+      "Azure DevOps/TFS YAML pipelines for builds & deployments",
+      "GCP, GKE, Kubernetes & Helm for app deployment",
+      "Android integration & TLS/cert troubleshooting",
+    ],
+  },
+  {
+    id: "e2",
+    period: "2024 – 2025",
+    role: "React / TypeScript Developer",
+    company: "HRP — Anomaly Detection Project",
+    points: [
+      "Built UI pages & workflows for an anomaly detection platform",
+      "Integrated frontend components with backend APIs",
+      "Designed Looker dashboards for operational insights",
+    ],
+  },
+  {
+    id: "e3",
+    period: "2024 – 2025",
+    role: "Software Engineer Intern",
+    company: "RealPage",
+    points: [
+      "Built OpenSearch dashboards for monitoring non-prod data",
+      "Wrote search queries & visualizations for infra data",
+      "Partnered with engineering teams on monitoring needs",
+    ],
+  },
+];
+
+const WX_DECOR = [
+  { id: "wd1", src: "assets/ufo.png", top: "3%", side: "left", inset: "3%", width: 130, rot: -10, dur: 7.6, delay: 0 },
+  { id: "wd2", src: "assets/phone.png", top: "8%", side: "right", inset: "4%", width: 140, rot: 8, dur: 8.4, delay: 0.3 },
+  { id: "wd3", src: "assets/strawberry.png", top: "60%", side: "left", inset: "5%", width: 105, rot: 10, dur: 7.1, delay: 0.6 },
+  { id: "wd4", src: "assets/bulb.png", top: "64%", side: "right", inset: "5%", width: 110, rot: -8, dur: 8.0, delay: 0.2 },
+  { id: "wd5", src: "assets/heart.png", top: "88%", side: "left", inset: "10%", width: 72, rot: -6, dur: 6.4, delay: 0.5 },
+];
+
+function WorkDecor() {
+  return WX_DECOR.map((d) => (
+    <div
+      key={d.id}
+      className="wx-deco"
+      aria-hidden="true"
+      style={{
+        top: d.top,
+        [d.side]: d.inset,
+        "--deco-w": `${d.width}px`,
+        "--deco-rot": `${d.rot}deg`,
+        "--deco-dur": `${d.dur}s`,
+        "--deco-delay": `${d.delay}s`,
+      }}
+    >
+      <img src={d.src} alt="" loading="lazy" />
+    </div>
+  ));
+}
+
+function ConnectMonitor() {
+  const ref = useRef(null);
+  const [on, setOn] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let timer;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          timer = setTimeout(() => setOn(true), 350);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.4 }
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      clearTimeout(timer);
+    };
+  }, []);
+
+  return (
+    <div className="wx-monitor-wrap">
+      <p className="wx-monitor-caption">psst — turn it on</p>
+      <div className={`wx-monitor${on ? " wx-monitor--on" : ""}`} ref={ref}>
+        <img className="wx-monitor__img" src="assets/computer.png" alt="Retro computer" />
+        <div className="wx-monitor__screen" aria-hidden="true">
+          <div className="wx-monitor__flash" />
+        </div>
+        <a
+          className="wx-monitor__link"
+          href="https://www.linkedin.com/in/badugu-chandana/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          connect on linkedin →
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function WorkExperience() {
+  const trackRef = useRef(null);
+  const [active, setActive] = useState(0);
+
+  const scrollToIndex = (i) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const card = track.children[i];
+    if (card) card.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  };
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const cards = [...track.children];
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+            setActive(cards.indexOf(entry.target));
+          }
+        });
+      },
+      { root: track, threshold: [0.6] }
+    );
+    cards.forEach((c) => io.observe(c));
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <section className="wx-root">
+      <WorkDecor />
+      <div className="wx-inner">
+        <p className="wx-eyebrow">the professional bit</p>
+        <h2 className="wx-heading">what I've actually been doing</h2>
+
+        <div className="wx-carousel">
+          <span className={`wx-hint${active !== 0 ? " wx-hint--done" : ""}`} aria-hidden="true">
+            ← scroll left &amp; right →
+          </span>
+          <div className="wx-track" ref={trackRef}>
+            {EXPERIENCES.map((e, i) => (
+              <article className="wx-card" style={{ "--wx-rot": `${i % 2 === 0 ? -1.5 : 1.6}deg` }} key={e.id}>
+                <span className="wx-star wx-star--tl" aria-hidden="true">✦</span>
+                <span className="wx-star wx-star--br" aria-hidden="true">✦</span>
+                <div className="wx-scallop" aria-hidden="true" />
+                <div className="wx-paper">
+                  <p className="wx-period">{e.period}</p>
+                  <h3 className="wx-role">{e.role}</h3>
+                  <p className="wx-company">{e.company}</p>
+                  <ul className="wx-points">
+                    {e.points.map((p, j) => (
+                      <li key={j}>{p}</li>
+                    ))}
+                  </ul>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <div className="wx-dots">
+          {EXPERIENCES.map((_, i) => (
+            <button
+              key={i}
+              className={`wx-dot${i === active ? " wx-dot--active" : ""}`}
+              onClick={() => scrollToIndex(i)}
+              aria-label={`Go to card ${i + 1}`}
+              type="button"
+            />
+          ))}
+        </div>
+
+        <ConnectMonitor />
+      </div>
+    </section>
+  );
+}
+
+function Demo() {
+  const [playKey, setPlayKey] = useState(0);
+  return (
+    <React.Fragment>
+      <div className="wrap">
+        <PortfolioHero playKey={playKey} />
+      </div>
+      <FolderStack />
+      <ScrollTicker />
+      <PortfolioTeaser />
+      <WorkExperience />
+      <button className="replay-btn" onClick={() => setPlayKey(k => k + 1)}>↻ Replay entrance</button>
+    </React.Fragment>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+</script>
+</body>
+</html>
