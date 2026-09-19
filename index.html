@@ -192,7 +192,6 @@
   }
   .ph-tag__dot { width: 6px; height: 6px; border-radius: 50%; background: #3aa76d; display: inline-block; }
   .tag--sage         { background: var(--sage); color: #1e3d20; }
-  .tag--sage-outline { background: var(--paper); color: var(--sage-deep); border: 1.5px solid var(--sage); }
   .tag--mustard      { background: var(--mustard); color: #4a3900; }
   .tag--pill         { background: var(--paper); color: var(--ink); border: 1.5px solid #ddd6c4; }
   .ph-doodle {
@@ -867,7 +866,6 @@ const DEFAULT_STICKERS = [
   { id: "sweat", label: "sweat the details", kind: "tag tag--sage", style: { top: "6%", right: "14%" }, float: "float-b" },
   { id: "role", label: "Product Designer", kind: "tag tag--mustard", style: { top: "34%", left: "16%" }, float: "float-c" },
   { id: "status", label: "open to new work", kind: "tag tag--pill", style: { top: "36%", left: "38%" }, float: "float-a", dot: true },
-  { id: "loc", label: "Chicago, IL", kind: "tag tag--sage-outline", style: { top: "34%", right: "16%" }, float: "float-b" },
 ];
 
 const DEFAULT_PHOTOS = [
@@ -882,8 +880,6 @@ const DEFAULT_DOODLES = [
 
 function PortfolioHero({
   name = "CHANDANA",
-  role = "Product Designer",
-  location = "Chicago, IL",
   tagline = ["I design software that", "gets out of your way."],
   stickers = DEFAULT_STICKERS,
   photos = DEFAULT_PHOTOS,
